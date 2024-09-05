@@ -89,7 +89,7 @@ const afterRead = async ({ file }: any) => {
     <Uploader :after-read="afterRead" />
   </div>
 
-  <div v-if="myArray.length !== 0">
+  <div>
     <CellGroup title="搜索结果">
       <Cell v-for="item in myArray" :id="item.__EMPTY" :title="item.__EMPTY">
         <template #label>
