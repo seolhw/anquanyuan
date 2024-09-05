@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { Cell,CellGroup, Loading, Overlay } from 'vant';
 import { createWorker } from "tesseract.js";
-import { Uploader, UploaderAfterRead } from "vant";
+import { Uploader } from "vant";
 // @ts-ignore
 import stringSimilarity from 'string-similarity'
 
