@@ -16,6 +16,7 @@ defineExpose({ topaishe });
 <template>
   <div>
     <button @click="topaishe">拍摄照片</button>
+    <input type="file">
   </div>
 </template>
 
