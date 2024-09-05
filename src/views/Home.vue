@@ -30,8 +30,8 @@ const data = [
 const items = ref(data);
 
 
-function compClass (cn:any, itemv: any) {
-  let classname = cn + " correct"
+function compClass (itemv: any) {
+  let classname = " correct"
   // itemv.__EMPTY_1 === "正确" &&  (classname += " correct")
   itemv.__EMPTY_1 === "错误" &&  (classname += " fail")
   return classname
@@ -50,9 +50,11 @@ function compClass (cn:any, itemv: any) {
             v-for="itemv in value"
             :id="itemv.__EMPTY"
             :title="itemv.__EMPTY"
-            :value="itemv.__EMPTY_1"
-            :value-class="compClass(item.class, itemv)"
-          />
+          >
+            <template #label>
+              <div :class="compClass(itemv)">答案：{{ itemv.__EMPTY_1 }}</div>
+            </template>
+          </Cell>
         </div>
       </IndexBar>
     </Tab>
@@ -92,10 +94,10 @@ function compClass (cn:any, itemv: any) {
   width: 100px;
 }
 
-.van-cell__value.correct {
+.correct {
   color: green;
 }
-.van-cell__value.fail {
+.fail {
   color: red;
 }
 

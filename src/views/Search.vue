@@ -23,6 +23,7 @@ const show = ref<boolean>(false);
 
 const afterRead = async ({ file }: any) => {
   show.value=true
+  myArray.value = []
   const worker = await createWorker("chi_sim");
   const ret = await worker.recognize(file);
   await worker.terminate();
@@ -46,12 +47,11 @@ const afterRead = async ({ file }: any) => {
 
   <div v-if="myArray.length !== 0">
     <CellGroup title="搜索结果">
-      <Cell
-        v-for="item in myArray"
-        :id="item.__EMPTY"
-        :title="item.__EMPTY"
-        :value="item.__EMPTY_1"
-      />
+      <Cell v-for="item in myArray" :id="item.__EMPTY" :title="item.__EMPTY">
+        <template #label>
+          <div class="correct">答案：{{ item.__EMPTY_1 }}</div>
+        </template>
+      </Cell>
     </CellGroup>
   </div>
   <Overlay :show="show">
@@ -75,6 +75,10 @@ const afterRead = async ({ file }: any) => {
 }
 .ing {
   padding-top: 20px;
+}
+
+.correct {
+  color: green;
 }
 /* Your styles here */
 </style>
