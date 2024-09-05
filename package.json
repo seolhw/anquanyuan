@@ -11,8 +11,10 @@
   "dependencies": {
     "lodash": "^4.17.21",
     "pinyin": "4.0.0-alpha.2",
+    "tesseract.js": "^5.1.1",
     "vant": "^4.9.4",
-    "vue": "^3.4.37"
+    "vue": "^3.4.37",
+    "vue-router": "4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.2",
