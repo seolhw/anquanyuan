@@ -73,11 +73,16 @@ const afterRead = async ({ file }: any) => {
   });
   const text = ret.data.text.replace(/\n/g, '')
 
-  const jie = allArray.filter(item => {
+  const jie = allArray.map(item => {
     const n = stringSimilarity.compareTwoStrings(item.__EMPTY
     , text);
-    return n > 0.5
-  })
+    return {
+      ...item,
+      n,
+    }
+  }).filter(item => {
+    return item.n > 0.2
+  }).sort((a,b) => b.n - a.n)
 
   myArray.value.push(...jie)
   show.value=false
@@ -85,28 +90,36 @@ const afterRead = async ({ file }: any) => {
 </script>
 
 <template>
-  <div class="search">
-    <Uploader :after-read="afterRead" />
+  <div class="snn">
+    <div class="search">
+      <Uploader :after-read="afterRead" />
+    </div>
+
+    <div>
+      <CellGroup title="搜索结果">
+        <Cell v-for="item in myArray" :id="item.__EMPTY" :title="item.__EMPTY">
+          <template #label>
+            <div class="dn">
+              <div class="correct">答案：{{ item.__EMPTY_1 }}</div>
+              <div class="correct">
+                匹配度：{{ Math.round(item.n * 100) / 100 }}
+              </div>
+            </div>
+          </template>
+        </Cell>
+      </CellGroup>
+    </div>
+    <!-- <img :src="image" alt="" /> -->
+    <Overlay :show="show">
+      <Loading size="60" />
+      <div class="ing">正在搜索...</div>
+    </Overlay>
+    <div v-if="error">
+      错误信息：
+      {{ JSON.stringify(error) }}
+    </div>
   </div>
 
-  <div>
-    <CellGroup title="搜索结果">
-      <Cell v-for="item in myArray" :id="item.__EMPTY" :title="item.__EMPTY">
-        <template #label>
-          <div class="correct">答案：{{ item.__EMPTY_1 }}</div>
-        </template>
-      </Cell>
-    </CellGroup>
-  </div>
-  <!-- <img :src="image" alt="" /> -->
-  <Overlay :show="show">
-    <Loading size="60" />
-    <div class="ing">正在搜索...</div>
-  </Overlay>
-  <div v-if="error">
-    错误信息：
-    {{ JSON.stringify(error) }}
-  </div>
   <!-- <div v-if="log">
     log信息：
     {{ log }}
@@ -132,6 +145,15 @@ const afterRead = async ({ file }: any) => {
 
 .correct {
   color: green;
+}
+.dn {
+  display: flex;
+  justify-content: space-between;
+}
+
+.snn {
+  height: calc(100vh - var(--van-tabbar-height));
+  overflow: auto;
 }
 /* Your styles here */
 </style>
