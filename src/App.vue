@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-ignore
 import { Button, BackTop, Tabs, Tab, IndexBar, IndexAnchor,Cell } from 'vant';
 // import { NCard, NTabs, NTabPane } from "naive-ui";
 // @ts-ignore
@@ -36,7 +37,7 @@ const data = [
 const items = ref(data);
 
 
-function compClass (cn, itemv) {
+function compClass (cn:any, itemv: any) {
   let classname = cn + " correct"
   // itemv.__EMPTY_1 === "正确" &&  (classname += " correct")
   itemv.__EMPTY_1 === "错误" &&  (classname += " fail")
