@@ -20,15 +20,13 @@ const myArray = ref<any[]>([]);
 
 const show = ref<boolean>(false);
 
-const worker = await createWorker("chi_sim");
-
 
 const afterRead = async ({ file }: any) => {
   show.value=true
   myArray.value = []
-  
+  const worker = await createWorker("chi_sim");
   const ret = await worker.recognize(file);
-  // await worker.terminate();
+  await worker.terminate();
   const text = ret.data.text.replace(/\n/g, '')
 
   const jie = allArray.filter(item => {
