@@ -14,7 +14,8 @@ const router = createRouter({
 })
 
 
-router.afterEach((to, from) => {
+// @ts-ignore
+router.afterEach((to: any, from: any) => {
 
   // wx.config({
   //   debug: false, // 开启调试模式
@@ -25,7 +26,7 @@ router.afterEach((to, from) => {
   //   jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage'] // 必填，需要使用的JS接口列表
   // });
 
-  
+
 })
 
 
