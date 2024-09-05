@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { Cell,CellGroup, Loading, Overlay } from 'vant';
-import { createWorker } from "tesseract.js";
+import { createWorker, OEM } from "tesseract.js";
 import { Uploader } from "vant";
+import Compressor from 'compressorjs';
 // @ts-ignore
 import stringSimilarity from 'string-similarity'
 
@@ -20,13 +21,56 @@ const myArray = ref<any[]>([]);
 
 const show = ref<boolean>(false);
 
+const error = ref<any>(null);
+
+// const image = ref<any>("");
+
+const log = ref<any[]>([]);
+
+let worker:Tesseract.Worker;
+
+onMounted( async () => {
+  worker = await createWorker("chi_sim",OEM.LSTM_ONLY, {
+    logger: m => log.value = [m],
+    workerPath: '/worker.min.js',
+    langPath: '/lang-data',
+    corePath: '/tesseract-core-simd-lstm.wasm.js',
+  });
+})
+
+onUnmounted(async () => {
+  await worker.terminate();
+})
 
 const afterRead = async ({ file }: any) => {
   show.value=true
   myArray.value = []
-  const worker = await createWorker("chi_sim");
-  const ret = await worker.recognize(file);
-  await worker.terminate();
+
+  // 压缩图片
+  const nFile: Blob  = await new Promise((res) => {
+    new Compressor(file, {
+      quality: .8,
+      resize: 'contain',
+      maxWidth: 800, // 最大宽度
+      maxHeight: 600, // 最大高度
+      success: (file) => {
+        res(file)
+      }
+    })
+  })
+
+  // image.value = URL.createObjectURL(nFile)
+
+  const ret = await worker.recognize(nFile).then(e =>{
+    show.value=false
+    return e
+  })
+  .catch(e => {
+    console.error(e);  // 处理可能的错误
+    error.value = e
+    show.value=false
+    return Promise.reject(e)
+  });
   const text = ret.data.text.replace(/\n/g, '')
 
   const jie = allArray.filter(item => {
@@ -54,10 +98,19 @@ const afterRead = async ({ file }: any) => {
       </Cell>
     </CellGroup>
   </div>
+  <!-- <img :src="image" alt="" /> -->
   <Overlay :show="show">
     <Loading size="60" />
     <div class="ing">正在搜索...</div>
   </Overlay>
+  <div v-if="error">
+    错误信息：
+    {{ JSON.stringify(error) }}
+  </div>
+  <!-- <div v-if="log">
+    log信息：
+    {{ log }}
+  </div> -->
 </template>
 
 <style scoped>
