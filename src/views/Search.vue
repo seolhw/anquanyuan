@@ -26,7 +26,7 @@ const afterRead = async ({ file }: any) => {
   myArray.value = []
   const worker = await createWorker("chi_sim");
   const ret = await worker.recognize(file);
-  await worker.terminate();
+  // await worker.terminate();
   const text = ret.data.text.replace(/\n/g, '')
 
   const jie = allArray.filter(item => {
