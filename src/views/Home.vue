@@ -1,15 +1,8 @@
 <script setup lang="ts">
-// @ts-ignore
-import { Button, BackTop, Tabs, Tab, IndexBar, IndexAnchor,Cell } from 'vant';
-// import { NCard, NTabs, NTabPane } from "naive-ui";
-// @ts-ignore
+import { BackTop, Tabs, Tab, IndexBar, IndexAnchor,Cell } from 'vant';
 import bool from "@/assets/bool.json"  with { type: "json" };
-// @ts-ignore
 import danxuan from "@/assets/danxuan.json"  with { type: "json" };
-// @ts-ignore
 import duoxuan from "@/assets/duoxuan.json"  with { type: "json" };
-// import danxuan from "@/assets/danxuan.json";
-// import duoxuan from "@/assets/duoxuan.json";
 
 import { ref } from "vue";
 
@@ -76,7 +69,7 @@ function compClass (cn:any, itemv: any) {
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
-  height: 100vh;
+  height: calc(100vh - var(--van-tabbar-height));
 }
 
 .van-tabs__content {

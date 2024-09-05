@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "lodash": "^4.17.21",
+    "nanoid": "^5.0.7",
     "pinyin": "4.0.0-alpha.2",
+    "string-similarity": "^4.0.4",
     "tesseract.js": "^5.1.1",
     "vant": "^4.9.4",
     "vue": "^3.4.37",
