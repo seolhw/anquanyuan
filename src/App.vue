@@ -8,6 +8,7 @@ import { Tabbar, TabbarItem } from "vant";
     <Tabbar route>
       <TabbarItem replace to="/" icon="home-o">题库</TabbarItem>
       <TabbarItem replace to="/search" icon="search">搜索</TabbarItem>
+      <TabbarItem replace to="/about" icon="more-o">更多</TabbarItem>
     </Tabbar>
   </main>
 </template>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Cell,CellGroup, Loading, Overlay } from 'vant';
+import { Cell, Loading, Overlay } from 'vant';
 import { createWorker, OEM } from "tesseract.js";
-import { Uploader } from "vant";
+import {BackTop, Uploader, Search } from "vant";
 import Compressor from 'compressorjs';
 // @ts-ignore
 import stringSimilarity from 'string-similarity'
@@ -18,6 +18,7 @@ const duoArr = Object.values(duoxuan).flat()
 const allArray = boolArr.concat(danArr, duoArr)
 
 const myArray = ref<any[]>([]);
+const searchValue = ref<string>("");
 
 const show = ref<boolean>(false);
 
@@ -82,37 +83,96 @@ const afterRead = async ({ file }: any) => {
     }
   }).filter(item => {
     return item.n > 0.2
-  }).sort((a,b) => b.n - a.n)
+  }).slice(0,50).sort((a,b) => b.n - a.n)
 
   myArray.value.push(...jie)
   show.value=false
 };
+
+
+const search = () => {
+  myArray.value = []
+  if(!searchValue.value){
+    return
+  }
+
+  const jie = allArray.map(item => {
+    return {
+      ...item,
+      index_0: item.__EMPTY.indexOf(searchValue.value)
+    }
+  }).filter(item => {
+    return item.index_0 >= 0
+  }).slice(0,50).sort((a,b) => a.index_0 - b.index_0)
+
+  myArray.value.push(...jie)
+}
 </script>
 
 <template>
-  <div class="snn">
-    <div class="search">
+  <div
+    class="overflow-auto flex flex-col"
+    style="height: calc(100vh - var(--van-tabbar-height))"
+  >
+    <div class="flex justify-center p-5">
       <Uploader :after-read="afterRead" />
+      <Search
+        v-model="searchValue"
+        placeholder="输入文字搜索"
+        @search="search"
+      />
     </div>
 
-    <div>
-      <CellGroup title="搜索结果">
-        <Cell v-for="item in myArray" :id="item.__EMPTY" :title="item.__EMPTY">
-          <template #label>
-            <div class="dn">
-              <div class="correct">答案：{{ item.__EMPTY_1 }}</div>
-              <div class="correct">
-                匹配度：{{ Math.round(item.n * 100) / 100 }}
+    <div class="flex-1 overflow-auto flex flex-col">
+      <div class="text-gray-500 p-4 text-sm border-b-2">
+        <div class="flex justify-between">
+          <div>搜索结果</div>
+          <div v-if="myArray.length > 0">共 {{ myArray.length }} 个结果</div>
+        </div>
+      </div>
+      <div class="flex-1 overflow-auto flex flex-col">
+        <div
+          class="flex items-center justify-center flex-1 text-gray-500"
+          v-if="myArray.length === 0"
+        >
+          暂无搜索结果
+        </div>
+        <div v-else class="flex-1">
+          <Cell v-for="item in myArray" :id="item.__EMPTY">
+            <template #title>
+              <span v-if="item.n">
+                {{ item.__EMPTY }}
+              </span>
+              <span v-if="item.index_0 >= 0">
+                <span v-for="(v, i) in item.__EMPTY.split(searchValue)">
+                  {{ v
+                  }}<span
+                    class="text-orange-500"
+                    v-if="i < item.__EMPTY.split(searchValue).length - 1"
+                    >{{ searchValue }}</span
+                  >
+                </span>
+              </span>
+            </template>
+            <template #label>
+              <div class="flex justify-between">
+                <div>
+                  <span>答案：</span>
+                  <span class="text-green-500">{{ item.__EMPTY_1 }}</span>
+                </div>
+                <div v-if="item.n">
+                  匹配度：{{ Math.round(item.n * 100) / 100 }}
+                </div>
+                <div v-if="item.index_0 >= 0">距离：{{ item.index_0 }}</div>
               </div>
-            </div>
-          </template>
-        </Cell>
-      </CellGroup>
+            </template>
+          </Cell>
+        </div>
+        <BackTop />
+      </div>
     </div>
-    <!-- <img :src="image" alt="" /> -->
-    <Overlay :show="show">
+    <Overlay class="flex justify-center items-center flex-col" :show="show">
       <Loading size="60" />
-      <div class="ing">正在搜索...</div>
     </Overlay>
     <div v-if="error">
       错误信息：
@@ -126,34 +186,4 @@ const afterRead = async ({ file }: any) => {
   </div> -->
 </template>
 
-<style scoped>
-.search {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
-.van-overlay {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-}
-.ing {
-  padding-top: 20px;
-}
-
-.correct {
-  color: green;
-}
-.dn {
-  display: flex;
-  justify-content: space-between;
-}
-
-.snn {
-  height: calc(100vh - var(--van-tabbar-height));
-  overflow: auto;
-}
-/* Your styles here */
-</style>
+<style scoped></style>
