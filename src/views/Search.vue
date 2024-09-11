@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { Cell, Loading, Overlay, Icon, ImagePreview, Image  } from 'vant';
 import { createWorker, OEM } from "tesseract.js";
 import SearchImage from '@/assets/文字搜索示例图.png';
-import PaiImage from '@/assets/拍照搜索示例图.jpg';
+import PaiImage from '@/assets/拍照搜索示例图.png';
 import {BackTop, Uploader, Search } from "vant";
 import Compressor from 'compressorjs';
 // @ts-ignore
