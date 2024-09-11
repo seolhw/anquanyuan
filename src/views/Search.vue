@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { Cell, Loading, Overlay } from 'vant';
+import { Cell, Loading, Overlay, Icon, ImagePreview, Image  } from 'vant';
 import { createWorker, OEM } from "tesseract.js";
+import SearchImage from '@/assets/文字搜索示例图.png';
+import PaiImage from '@/assets/拍照搜索示例图.jpg';
 import {BackTop, Uploader, Search } from "vant";
 import Compressor from 'compressorjs';
 // @ts-ignore
@@ -23,6 +25,8 @@ const searchValue = ref<string>("");
 const show = ref<boolean>(false);
 
 const error = ref<any>(null);
+
+const ImageShow = ref<boolean>(false);
 
 // const image = ref<any>("");
 
@@ -114,13 +118,23 @@ const search = () => {
     class="overflow-auto flex flex-col"
     style="height: calc(100vh - var(--van-tabbar-height))"
   >
-    <div class="flex justify-center p-5">
+    <div class="flex justify-center pt-5">
       <Uploader :after-read="afterRead" />
-      <Search
-        v-model="searchValue"
-        placeholder="输入文字搜索"
-        @search="search"
-      />
+      <div class="flex flex-col">
+        <Search
+          v-model="searchValue"
+          placeholder="输入文字搜索"
+          @search="search"
+        />
+        <div
+          class="text-center text-orange-500 text-sm underline flex justify-end"
+          style="padding: var(--van-search-padding)"
+          @click="() => (ImageShow = true)"
+        >
+          <div><Icon name="question-o" /></div>
+          <div class="pl-0.5">查看示例</div>
+        </div>
+      </div>
     </div>
 
     <div class="flex-1 overflow-auto flex flex-col">
@@ -179,6 +193,17 @@ const search = () => {
       {{ JSON.stringify(error) }}
     </div>
   </div>
+  <ImagePreview
+    v-model:show="ImageShow"
+    :images="[PaiImage, SearchImage]"
+    @change="() => {}"
+  >
+    <template #image="{ src }">
+      <div class="p-10">
+        <Image :src="src" />
+      </div>
+    </template>
+  </ImagePreview>
 
   <!-- <div v-if="log">
     log信息：
