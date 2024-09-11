@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { Cell, Loading, Overlay, Icon, ImagePreview, Image  } from 'vant';
-import { createWorker, OEM } from "tesseract.js";
+import { createWorker, OEM, RecognizeResult } from "tesseract.js";
 import SearchImage from '@/assets/文字搜索示例图.png';
 import PaiImage from '@/assets/拍照搜索示例图.png';
 import {BackTop, Uploader, Search } from "vant";
@@ -47,6 +47,11 @@ onUnmounted(async () => {
   await worker.terminate();
 })
 
+
+const await5s = new Promise((resolve) => {
+  setTimeout(resolve, 5 * 1000)
+})
+
 const afterRead = async ({ file }: any) => {
   show.value=true
   myArray.value = []
@@ -66,17 +71,14 @@ const afterRead = async ({ file }: any) => {
 
   // image.value = URL.createObjectURL(nFile)
 
-  const ret = await worker.recognize(nFile).then(e =>{
+  const ret: RecognizeResult | unknown = await Promise.race([worker.recognize(nFile), await5s])
+
+  if(!ret) {
     show.value=false
-    return e
-  })
-  .catch(e => {
-    console.error(e);  // 处理可能的错误
-    error.value = e
-    show.value=false
-    return Promise.reject(e)
-  });
-  const text = ret.data.text.replace(/\n/g, '')
+    return
+  }
+
+  const text = (ret as RecognizeResult).data.text.replace(/\n/g, '')
 
   const jie = allArray.map(item => {
     const n = stringSimilarity.compareTwoStrings(item.__EMPTY
