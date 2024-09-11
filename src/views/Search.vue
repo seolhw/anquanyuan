@@ -48,8 +48,8 @@ onUnmounted(async () => {
 })
 
 
-const await5s = new Promise((resolve) => {
-  setTimeout(resolve, 5 * 1000)
+const awaitTime = (time: number) => new Promise((resolve) => {
+  setTimeout(resolve, time * 1000)
 })
 
 const afterRead = async ({ file }: any) => {
@@ -71,7 +71,7 @@ const afterRead = async ({ file }: any) => {
 
   // image.value = URL.createObjectURL(nFile)
 
-  const ret: RecognizeResult | unknown = await Promise.race([worker.recognize(nFile), await5s])
+  const ret: RecognizeResult | unknown = await Promise.race([worker.recognize(nFile), awaitTime(5)])
 
   if(!ret) {
     show.value=false
